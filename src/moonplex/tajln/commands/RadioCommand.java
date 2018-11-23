@@ -18,8 +18,13 @@ public class RadioCommand extends SimpleCommand {
 
     private String radio = Radio.getPlugin().getConfig().getString("prefix");
 
+    private CommandManager _commandManager;
+
     public RadioCommand(CommandManager commandManager) {
         super(commandManager, "radio");
+
+        _commandManager = commandManager;
+
     }
 
     @Override
@@ -46,44 +51,50 @@ public class RadioCommand extends SimpleCommand {
 	private void playcommand(Player sender, String[] args){
 		try
 		{
-				String param = args[1];
-				StringBuilder file = new StringBuilder(args[2]);
-				int n = 3;
-				while (n < args.length) {
-				file.append(" ").append(args[n]);
-				n = n + 1;
-				}
-				file = new StringBuilder(file.toString().replaceAll(".nbs", ""));
+		    boolean perms = false;
+		    if (sender.hasPermission("radio.admin"))
+		        perms = true;
+            String param = args[1];
+            StringBuilder file = new StringBuilder(args[2]);
+            int n = 3;
+            while (n < args.length) {
+            file.append(" ").append(args[n]);
+            n = n + 1;
+            }
+            file = new StringBuilder(file.toString().replaceAll(".nbs", ""));
 
-				File data = new File(Radio.getPlugin().getDataFolder() + "/music/");
-				if (!(Objects.requireNonNull(data.list()).length > 0))
-				{
-					sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("nosongs"));
-					return;
-				}
-				File F = new File(Radio.getPlugin().getDataFolder() + "/music/" + file.toString().replaceAll(".nbs", "") + ".nbs");
-				if (!(F.isFile()))
-				{
-					sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("nofile").replaceAll("<file>", file.toString()));
-					return;
-				}
+            File data = new File(Radio.getPlugin().getDataFolder() + "/music/");
+            if (!(Objects.requireNonNull(data.list()).length > 0))
+            {
+                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("nosongs"));
+                return;
+            }
+            File F = new File(Radio.getPlugin().getDataFolder() + "/music/" + file.toString().replaceAll(".nbs", "") + ".nbs");
+            if (!(F.isFile()))
+            {
+                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("nofile").replaceAll("<file>", file.toString()));
+                return;
+            }
 
-                String playfile = Radio.getPlugin().getDataFolder() + "/music/" + file.toString().replaceAll(".nbs", "") + ".nbs";
-                Song gimmesong = NBSDecoder.parse(new File(playfile));
-				if (param.equalsIgnoreCase("me"))
-				{
-					Radio.play(new Player[]{sender}, file.toString());
-                    sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playme").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()));
-				}
+            String playfile = Radio.getPlugin().getDataFolder() + "/music/" + file.toString().replaceAll(".nbs", "") + ".nbs";
+            Song gimmesong = NBSDecoder.parse(new File(playfile));
+            if (param.equalsIgnoreCase("me"))
+            {
+                Radio.play(new Player[]{sender}, file.toString());
+                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playme").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()));
+            }
 
-				else if (param.equalsIgnoreCase("all"))
-				{
-				    Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), file.toString());
-                    for (Player p : Bukkit.getOnlinePlayers())
-                    {
+            else if (param.equalsIgnoreCase("all"))
+            {
+                if (perms) {
+                    Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), file.toString());
+                    for (Player p : Bukkit.getOnlinePlayers()) {
                         p.sendMessage(radio + Radio.getPlugin().getConfig().getString("playall").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()));
                     }
-				}
+                }else{
+                    sender.sendMessage(radio + _commandManager.NOPERMS);
+                }
+            }
 
 		} catch (Exception e){
 			sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playerror"));
@@ -92,6 +103,9 @@ public class RadioCommand extends SimpleCommand {
 
 	private void stopmusic(Player sender, String[] args){
 		try{
+            boolean perms = false;
+            if (sender.hasPermission("radio.admin"))
+                perms = true;
 			String param = args[1];
 
 			if (param.equalsIgnoreCase("me"))
@@ -101,9 +115,13 @@ public class RadioCommand extends SimpleCommand {
 			}
 
 			else if (param.equalsIgnoreCase("all")) {
-                Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), "stop");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()));
+			    if(perms) {
+                    Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), "stop");
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()));
+                    }
+                }else{
+                    sender.sendMessage(radio + _commandManager.NOPERMS);
                 }
             }
 		} catch (Exception e){

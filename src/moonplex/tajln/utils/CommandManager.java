@@ -15,8 +15,8 @@ public class CommandManager{
 	private static List<CommandManager> list = new ArrayList<CommandManager>();
 	private List<SimpleCommand> commandList = new ArrayList<SimpleCommand>();
 
-	 public String NOPERMS = "§cYou are not allowed to do that";
-	 public String ONLYINGAME_MESSAGE = "§cThis is not a console command";
+	 public String NOPERMS = "You are not allowed to do that";
+	 String ONLYINGAME_MESSAGE = "This is not a console command";
 
 	public CommandManager(Plugin plugin){
 		
@@ -43,7 +43,7 @@ public class CommandManager{
 		this.commandList.add(command);
 	}
 
-	public void registerCommands(List<SimpleCommand> commands)
+	private void registerCommands(List<SimpleCommand> commands)
 	{
 		for (SimpleCommand command : commands)
     {
