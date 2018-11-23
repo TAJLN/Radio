@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="IntelliGuard" name="Obfuscation">
+      <configuration>
+        <option name="yGuardJar" value="E:\Random Projects for everything\yguard\yguard.jar" />
+        <option name="inFile" value="E:\Random Projects for everything\Radio\bin\Radio.jar" />
+        <option name="outFile" value="E:\Random Projects for everything\Radio\Testing\plugins\Radio.jar" />
+        <option name="mainclass" value="moonplex.tajln.Radio" />
+        <option name="namingScheme" value="best" />
+        <option name="jarConfig">
+          <JarConfig>
+            <option name="jarEntries">
+              <list>
+                <option value="E:\Random Projects for everything\Radio\out\production\Radio" />
+                <option value="E:\Random Projects for everything\Radio\plugin.yml" />
+              </list>
+            </option>
+          </JarConfig>
+        </option>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="spigot 1.8" level="project" />
+  </component>
+</module>
