@@ -1,9 +1,8 @@
 package moonplex.tajln;
 
 import moonplex.tajln.NoteBlockAPI.*;
-import moonplex.tajln.utils.CommandManager;
 import moonplex.tajln.commands.RadioCommand;
-import org.apache.commons.io.FileUtils;
+import moonplex.tajln.utils.CommandManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,15 +34,17 @@ public class Radio extends JavaPlugin
         this.getConfig().addDefault("commandinfo3","/radio stop");
         this.getConfig().addDefault("nosongs","There are no songs available!");
         this.getConfig().addDefault("nofile","Song <file> does not exist!");
-        this.getConfig().addDefault("playme","You have started playing <author> - <title> to yourself");
-        this.getConfig().addDefault("playall","<player> has started playing <author> - <title> to everyone");
-        this.getConfig().addDefault("playerror","/radio play <all, me> <songname>");
-        this.getConfig().addDefault("stoperror","/radio stop <all, me>");
-        this.getConfig().addDefault("stopme","You have stopped playing for yourself");
-        this.getConfig().addDefault("stopall","<player> has stopped playing for everyone");
+        this.getConfig().addDefault("playyou","You have started playing <author> - <title> to <player>.");
+        this.getConfig().addDefault("playall","<player> has started playing <author> - <title> to <player2>.");
+        this.getConfig().addDefault("playerror","/radio play <all, me, world, playername> <songname>.");
+        this.getConfig().addDefault("noplayer","<player> isn't on the server right now");
+        this.getConfig().addDefault("stoperror","/radio stop <all, me, world, playername>");
+        this.getConfig().addDefault("stopyou","You have stopped playing for <player>.");
+        this.getConfig().addDefault("stopall","<player> has stopped playing for <player2>.");
         this.getConfig().addDefault("listprefix","List of available songs:");
         this.getConfig().addDefault("updatesongs",true);
         this.getConfig().addDefault("songurl","https://www.dropbox.com/s/70ibl6nyqd7kwdd/music.zip?dl=1");
+
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
 
@@ -66,10 +67,6 @@ public class Radio extends JavaPlugin
 	{
 	    String musicfolder = plugin.getDataFolder() + "/music";
         Files.createDirectories(Paths.get(musicfolder));
-
-        //File music = new File(musicfolder);
-        //FileUtils.cleanDirectory(music);
-
 		File destDir = new File(plugin.getDataFolder() + "/music/");
 		URL url = new URL(Radio.getPlugin().getConfig().getString("songurl"));
 		byte[] buffer = new byte[1024];
@@ -87,6 +84,7 @@ public class Radio extends JavaPlugin
 		}
 		zis.closeEntry();
 		zis.close();
+		System.out.println("Updated default songs!");
 	}
 
 	private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {

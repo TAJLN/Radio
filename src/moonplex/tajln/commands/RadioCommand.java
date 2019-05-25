@@ -49,17 +49,17 @@ public class RadioCommand extends SimpleCommand {
     }
 
 	private void playcommand(Player sender, String[] args){
-		try
-		{
-		    boolean perms = false;
-		    if (sender.hasPermission("radio.admin"))
-		        perms = true;
+        try
+        {
+            boolean perms = false;
+            if (sender.hasPermission("radio.admin"))
+                perms = true;
             String param = args[1];
             StringBuilder file = new StringBuilder(args[2]);
             int n = 3;
             while (n < args.length) {
-            file.append(" ").append(args[n]);
-            n = n + 1;
+                file.append(" ").append(args[n]);
+                n = n + 1;
             }
             file = new StringBuilder(file.toString().replaceAll(".nbs", ""));
 
@@ -78,10 +78,12 @@ public class RadioCommand extends SimpleCommand {
 
             String playfile = Radio.getPlugin().getDataFolder() + "/music/" + file.toString().replaceAll(".nbs", "") + ".nbs";
             Song gimmesong = NBSDecoder.parse(new File(playfile));
+
+
             if (param.equalsIgnoreCase("me"))
             {
                 Radio.play(new Player[]{sender}, file.toString());
-                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playme").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()));
+                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playyou").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>","yourself"));
             }
 
             else if (param.equalsIgnoreCase("all"))
@@ -89,44 +91,108 @@ public class RadioCommand extends SimpleCommand {
                 if (perms) {
                     Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), file.toString());
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("playall").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()));
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("playall").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()).replaceAll("<player2>", "everyone"));
                     }
                 }else{
                     sender.sendMessage(radio + _commandManager.NOPERMS);
                 }
             }
 
-		} catch (Exception e){
-			sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playerror"));
-		}
-	}
+            else if (param.equalsIgnoreCase("world"))
+            {
+                if (perms) {
+                    Radio.play(sender.getWorld().getPlayers().toArray(new Player[0]), file.toString());
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("playall").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()).replaceAll("<player2>", "everyone in their world"));
+                    }
+                }else{
+                    sender.sendMessage(radio + _commandManager.NOPERMS);
+                }
+            }
+
+            else
+            {
+                Player p;
+                if ((p = Bukkit.getPlayer(param)) != null )
+                {
+                    if (perms)
+                    {
+                        Radio.play(new Player[]{p}, file.toString());
+                        sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playyou").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()).replaceAll("<player2>", p.getName()));
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("playall").replaceAll("<author>", gimmesong.getAuthor()).replaceAll("<title>", gimmesong.getTitle()).replaceAll("<player>", sender.getName()).replaceAll("<player2>", "you"));
+                    } else {
+                        sender.sendMessage(radio + _commandManager.NOPERMS);
+                    }
+                }
+                else
+                {
+                    sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("noplayer").replaceAll("<player>", param));
+                }
+            }
+
+        } catch (Exception e){
+            sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("playerror"));
+        }
+}
 
 	private void stopmusic(Player sender, String[] args){
-		try{
+        try{
             boolean perms = false;
             if (sender.hasPermission("radio.admin"))
                 perms = true;
-			String param = args[1];
+            String param = args[1];
 
-			if (param.equalsIgnoreCase("me"))
-			{
-				Radio.play(new Player[]{sender}, "stop");
-                sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopme"));
-			}
+            if (param.equalsIgnoreCase("me"))
+            {
+                Radio.play(new Player[]{sender}, "stop");
+            }
 
-			else if (param.equalsIgnoreCase("all")) {
-			    if(perms) {
+            else if (param.equalsIgnoreCase("all")) {
+                if(perms) {
                     Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), "stop");
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()));
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()).replaceAll("<player2>", "everyone"));
                     }
                 }else{
                     sender.sendMessage(radio + _commandManager.NOPERMS);
                 }
             }
-		} catch (Exception e){
-			sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("stoperror"));
-		}
+
+            else if (param.equalsIgnoreCase("world")) {
+                if(perms) {
+                    Radio.play(Bukkit.getOnlinePlayers().toArray(new Player[0]), "stop");
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()).replaceAll("<player2>", "everyone in their world"));
+                    }
+                }else{
+                    sender.sendMessage(radio + _commandManager.NOPERMS);
+                }
+            }
+
+            else
+            {
+                Player p;
+                if ((p = Bukkit.getPlayer(param)) != null)
+                {
+                    if (perms)
+                    {
+                        Radio.play(new Player[]{p}, "stop");
+                        sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopyou").replaceAll("<player>", sender.getName()).replaceAll("<player2>", p.getName()));
+                        p.sendMessage(radio + Radio.getPlugin().getConfig().getString("stopall").replaceAll("<player>", sender.getName()).replaceAll("<player2>", "you"));
+                    }
+                    else
+                    {
+                        sender.sendMessage(radio + _commandManager.NOPERMS);
+                    }
+                }
+                else
+                {
+                    sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("noplayer").replaceAll("<player>", param));
+                }
+            }
+        } catch (Exception e){
+            sender.sendMessage(radio + Radio.getPlugin().getConfig().getString("stoperror"));
+        }
 	}
 
     private void listmusic(Player sender){

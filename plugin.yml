@@ -1,6 +1,6 @@
 name: Radio
 main: moonplex.tajln.Radio
-version: 1.2
+version: 1.3
 
 description: Play songs
 authors: [TAJLN]
